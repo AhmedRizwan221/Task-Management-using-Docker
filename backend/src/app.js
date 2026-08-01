@@ -31,9 +31,12 @@ app.use(cookieParser());
 
 
 // import routes here 
-
+import TaskRoute from "./routes/task.route";
 
 // initialize routes here 
+app.use('/api/v1/task', TaskRoute);
+
+
 app.get('/', (req, res) => {
     res.json("Server is running")
 })
