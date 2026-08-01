@@ -8,7 +8,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-  <h1 className='bg-green-200 text-red'>My Task Managment app with docker </h1>
+    <h1 className='bg-green-200 text-red'>My Task Managment app with docker </h1>
   )
 }
 
