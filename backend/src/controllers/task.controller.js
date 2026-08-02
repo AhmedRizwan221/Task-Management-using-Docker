@@ -6,6 +6,7 @@ import asynchHandler from "../utils/asyncHandler.js";
 // register task
 const addTask = asynchHandler(async (req, res) => {
     const { task, description } = req.body;
+    // console.log(task, description);
 
     if (!task || !description) {
         throw new ApiError(400, "All fields are required");
@@ -110,7 +111,7 @@ const deleteTask = asynchHandler(async (req, res) => {
     return res.status(200).json(
         new ApiRespond(
             200,
-            {},
+            { task: taskId },
             "Task deleted successfully"
         )
     )
