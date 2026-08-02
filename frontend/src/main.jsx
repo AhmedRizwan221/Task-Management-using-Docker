@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Home, TaskForm, TaskList, TaskCard } from "./index.js";
 import { Provider } from 'react-redux';
+import {store} from "./store/store.js";
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,12 @@ const router = createBrowserRouter([
         path: '/addTask',
         element: (
           <TaskForm />
+        )
+      },
+      {
+        path: '/editTask',
+        element: (
+          <TaskCard />
         )
       }
     ]

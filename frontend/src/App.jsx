@@ -3,12 +3,11 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+import { Outlet } from 'react-router-dom'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1 className='bg-green-200 text-red'>My Task Managment app with docker </h1>
+    <Outlet />
   )
 }
 
