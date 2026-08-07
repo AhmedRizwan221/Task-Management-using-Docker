@@ -59,6 +59,20 @@ const getSingleTask = asynchHandler(async (req, res) => {
 });
 
 // get all tasks 
+const getAllTasks = asynchHandler(async (req, res) => {
+    const tasks = await Task.find();
+    if (!tasks) {
+        throw new ApiError(404, "Tasks not found");
+    }
+
+    return res.status(200).json(
+        new ApiRespond(
+            200,
+            { tasks: tasks },
+            "All tasks are fetched successfully"
+        )
+    )
+})
 
 // update task
 const updateTask = asynchHandler(async (req, res) => {
@@ -71,31 +85,40 @@ const updateTask = asynchHandler(async (req, res) => {
 
     const oldTask = await Task.findById(taskId);
 
-    let taskValues = {};
+    if (!oldTask) {
+        throw new ApiError(404, "Task not found");
+    }
 
-    if (task) taskValues.task = task || oldTask?.task;
-    if (description) taskValues.description = description || oldTask?.description;
+    const taskValues = {};
 
-    const upatedTask = await Task.findByIdAndUpdate(
+    if (task !== undefined) {
+        taskValues.task = task;
+    }
+
+    if (description !== undefined) {
+        taskValues.description = description;
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(
         taskId,
-        {
-            taskValues
-        },
-        { new: true }
+        taskValues,
+        { returnDocument: "after" }
     );
 
-    if (!updateTask) {
-        throw new ApiError(500, "Something went wrong while updating task")
+    if (!updatedTask) {
+        throw new ApiError(
+            500,
+            "Something went wrong while updating task"
+        );
     }
 
     return res.status(200).json(
         new ApiRespond(
             200,
-            { task: updateTask },
+            { task: updatedTask },
             "Task updated successfully"
         )
-    )
-
+    );
 });
 
 // delete task
@@ -115,11 +138,41 @@ const deleteTask = asynchHandler(async (req, res) => {
             "Task deleted successfully"
         )
     )
-})
+});
+
+// toggle status 
+const toggleStatus = asynchHandler(async (req, res) => {
+    const { status } = req.body;
+    const { taskId } = req.params;
+
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+        throw new ApiError(404, "Task not found");
+    }
+
+    if (!["pending", "completed"].includes(status)) {
+        throw new ApiError(400, "Invalid status");
+    }
+
+    task.status = status;
+
+    await task.save();
+    // console.log(task);
+    return res.status(200).json(
+        new ApiRespond(
+            200,
+            { task },
+            "Status updated successfully"
+        )
+    );
+});
 
 export {
     addTask,
     getSingleTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    getAllTasks,
+    toggleStatus
 }
