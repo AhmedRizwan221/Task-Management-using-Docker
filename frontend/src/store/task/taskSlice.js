@@ -8,7 +8,7 @@ export const addTask = createAsyncThunk(
     "task/add",
     async ({ task, description }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(`${API_URL}/api/v1/task/add`, {task, description});
+            const response = await axios.post(`${API_URL}/api/v1/task/add`, { task, description });
 
             // console.log(response.data.data);
 
@@ -19,14 +19,14 @@ export const addTask = createAsyncThunk(
     }
 );
 
-// get single tasl
+// get single task
 export const getSingleTask = createAsyncThunk(
     "task/getSingle",
     async (taskId, { rejectWithValue }) => {
         try {
             const response = await axios.get(`${API_URL}/api/v1/task/${taskId}`);
 
-            console.log(response.data.data);
+            // console.log(response.data.data);
 
             return response.data.data
         } catch (error) {
@@ -40,9 +40,7 @@ export const updateTask = createAsyncThunk(
     "task/update",
     async ({ data, taskId }, { rejectWithValue }) => {
         try {
-            const response = await axios.patch(`${API_URL}/api/v1/task/update/${taskId}`);
-
-            console.log(response.data.data);
+            const response = await axios.patch(`${API_URL}/api/v1/task/update/${taskId}`, data);
 
             return response.data.data
         } catch (error) {
@@ -58,7 +56,7 @@ export const deleteTask = createAsyncThunk(
         try {
             const response = await axios.delete(`${API_URL}/api/v1/task/delete/${taskId}`);
 
-            console.log(response.data.data);
+            // console.log(response.data.data);
 
             return response.data.data;
         } catch (error) {
@@ -67,6 +65,36 @@ export const deleteTask = createAsyncThunk(
     }
 )
 
+export const getAllTasks = createAsyncThunk(
+    "task/getAll",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${API_URL}/api/v1/task/get-all-tasks`);
+
+            // console.log(response.data.data);
+
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+)
+
+export const toggleTaskStatus = createAsyncThunk(
+    "task/toggleStatus",
+    async ({ taskId, status }, { rejectWithValue }) => {
+        try {
+            // console.log(taskId, status, "redux");
+            const response = await axios.patch(`${API_URL}/api/v1/task/toggle-status/${taskId}`, { status });
+
+            // console.log(response.data.data);
+
+            return response.data.data
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+)
 
 const initialState = {
     tasks: [],
@@ -100,7 +128,7 @@ const taskSlice = createSlice({
             .addCase(addTask.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.loading = false;
-                state.tasks = state.tasks.push(action.payload.task);
+                state.tasks.push(action.payload.task);
             })
             .addCase(addTask.rejected, (state, action) => {
                 state.status = 'rejected';
@@ -150,6 +178,45 @@ const taskSlice = createSlice({
                 state.status = 'rejected';
                 state.loading = false;
                 state.error = action.payload
+            })
+            .addCase(getAllTasks.pending, (state) => {
+                state.status = 'pending';
+                state.loading = true
+            })
+            .addCase(getAllTasks.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.loading = false;
+                state.tasks = action.payload.tasks
+            })
+            .addCase(getAllTasks.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.loading = false;
+                state.error = action.payload
+            })
+            .addCase(toggleTaskStatus.pending, (state) => {
+                state.status = 'pending';
+                state.loading = true;
+            })
+            .addCase(toggleTaskStatus.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.loading = false;
+                const updatedTask = action.payload.task;
+
+
+                const index = state.tasks.findIndex(
+                    (task) => task._id === updatedTask._id
+                );
+
+
+                if (index !== -1) {
+                    state.tasks[index] = updatedTask;
+                }
+
+            })
+            .addCase(toggleTaskStatus.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.loading = false;
+                state.error = action.payload;
             })
     }
 
