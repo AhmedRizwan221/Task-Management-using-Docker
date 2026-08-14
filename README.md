@@ -46,7 +46,7 @@ Clone the repository and start all services:
 
 ```bash
 git clone <your-repo-url>
-cd task_management
+cd Task-Management-using-Docker
 docker-compose up --build
 ```
 
