@@ -45,7 +45,7 @@ The application runs as three separate containers on a shared Docker network, cr
 Clone the repository and start all services:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/AhmedRizwan221/Task-Management-using-Docker
 cd Task-Management-using-Docker
 docker-compose up --build
 ```
